@@ -2,17 +2,24 @@ import axios from 'axios' //引用axios
 import {getCookie} from './cookie' //引用刚才我们创建的util.js文件，并使用getCookie方法
 
 // axios 配置
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 500000;
 axios.defaults.baseURL = 'http://192.168.1.116:8081/'; //这是调用数据接口
 
 // http request 拦截器，通过这个，我们就可以把Cookie传到后台
 axios.interceptors.request.use(
   config => {
-    const token = getCookie('token'); //获取Cookie
-    config.data = JSON.stringify(config.data);
+    //const token = getCookie('token'); //获取Cookie
+    //config.data = JSON.stringify(config.data);
+    let params=[];
+    for(var key in config.data){
+      if(config.data[key]!==null){
+        params.push(key+'='+config.data[key])
+      }
+    }
+    //alert(params.join('&'));
+    config.data=params.join('&');
     config.headers = {
       'Content-Type':'application/x-www-form-urlencoded', //设置跨域头部
-      'Cookie':token
     };
     /*if (token) {
       config.params = {'token': token} //后台接收的参数，后面我们将说明后台如何接收
